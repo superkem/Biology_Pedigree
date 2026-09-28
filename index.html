@@ -1,0 +1,1244 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pedigree Detective</title>
+<meta name="description" content="An interactive step-by-step guide to drawing and reading genetic pedigree charts, with worked examples in albinism, hemophilia, rickets, PTC tasting, and blood type.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#eef1e8;
+  --bg-soft:#e4e9dc;
+  --surface:#fcfdfa;
+  --surface-2:#e9ede0;
+  --ink:#1c2620;
+  --ink-soft:#57645a;
+  --ink-faint:#8b9689;
+  --line:#cdd5c1;
+  --line-strong:#a8b39a;
+  --accent:#3c6e57;
+  --accent-strong:#294c3c;
+  --accent-soft:#dfeae1;
+  --accent-ink:#ffffff;
+  --warn:#a8542f;
+  --warn-soft:#f3e2d7;
+  --dom-tag:#8a5a1c;
+  --dom-tag-soft:#f2e6d1;
+  --rec-tag:#3c6e57;
+  --rec-tag-soft:#dfeae1;
+  --xlink-tag:#5c4c8a;
+  --xlink-tag-soft:#e6e1f2;
+  --pedigree-fill:#1c2620;
+  --pedigree-stroke:#1c2620;
+  --pedigree-surface:#fcfdfa;
+  --shadow: 0 1px 2px rgba(20,30,20,.06), 0 10px 28px -14px rgba(20,30,20,.28);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12180f;
+    --bg-soft:#171f13;
+    --surface:#1b2417;
+    --surface-2:#212c1c;
+    --ink:#eef1e8;
+    --ink-soft:#aeb8a5;
+    --ink-faint:#79826f;
+    --line:#324030;
+    --line-strong:#455a3f;
+    --accent:#7fc9a3;
+    --accent-strong:#a6dfbf;
+    --accent-soft:#213a2c;
+    --accent-ink:#0d1a12;
+    --warn:#e8a37c;
+    --warn-soft:#3a2a20;
+    --dom-tag:#e8c087;
+    --dom-tag-soft:#3a2f1a;
+    --rec-tag:#7fc9a3;
+    --rec-tag-soft:#1c3226;
+    --xlink-tag:#bcaee8;
+    --xlink-tag-soft:#292140;
+    --pedigree-fill:#eef1e8;
+    --pedigree-stroke:#eef1e8;
+    --pedigree-surface:#1b2417;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12180f;
+  --bg-soft:#171f13;
+  --surface:#1b2417;
+  --surface-2:#212c1c;
+  --ink:#eef1e8;
+  --ink-soft:#aeb8a5;
+  --ink-faint:#79826f;
+  --line:#324030;
+  --line-strong:#455a3f;
+  --accent:#7fc9a3;
+  --accent-strong:#a6dfbf;
+  --accent-soft:#213a2c;
+  --accent-ink:#0d1a12;
+  --warn:#e8a37c;
+  --warn-soft:#3a2a20;
+  --dom-tag:#e8c087;
+  --dom-tag-soft:#3a2f1a;
+  --rec-tag:#7fc9a3;
+  --rec-tag-soft:#1c3226;
+  --xlink-tag:#bcaee8;
+  --xlink-tag-soft:#292140;
+  --pedigree-fill:#eef1e8;
+  --pedigree-stroke:#eef1e8;
+  --pedigree-surface:#1b2417;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.55;
+  padding-inline:0;
+}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; color:var(--ink); margin:0 0 .4em;}
+p{margin:0 0 1em; max-width:66ch;}
+.mono{font-family:var(--font-mono);}
+sup{font-size:.65em;}
+a{color:var(--accent-strong);}
+
+.shell{max-width:1180px; margin:0 auto; padding:0 20px 80px;}
+
+/* ============ HERO ============ */
+.hero{
+  padding:56px 20px 40px;
+  background:
+    radial-gradient(ellipse at 15% -10%, var(--accent-soft), transparent 55%),
+    var(--bg-soft);
+  border-bottom:1px solid var(--line);
+}
+.hero-inner{max-width:1180px; margin:0 auto;}
+.eyebrow{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent-strong); display:flex; align-items:center; gap:8px; margin-bottom:14px;
+}
+.eyebrow::before{content:""; width:20px; height:1px; background:var(--accent-strong); display:inline-block;}
+.hero h1{font-size:clamp(32px,5vw,52px); line-height:1.05; max-width:16ch;}
+.hero .lede{font-size:17px; color:var(--ink-soft); max-width:56ch; margin-top:14px;}
+.hero-facts{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px;}
+.hero-fact{
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:7px 14px; font-size:13px; color:var(--ink-soft); display:flex; gap:7px; align-items:center;
+}
+.hero-fact b{color:var(--ink); font-weight:600;}
+
+/* ============ LAYOUT ============ */
+.layout{display:grid; grid-template-columns:220px minmax(0,1fr); gap:44px; margin-top:44px; align-items:start;}
+.layout > main{min-width:0;}
+@media (max-width:860px){ .layout{grid-template-columns:minmax(0,1fr);} }
+
+.toc{position:sticky; top:calc(env(safe-area-inset-top,0px) + 20px); display:flex; flex-direction:column; gap:2px; min-width:0;}
+.toc-title{font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px;}
+.toc a{
+  display:block; padding:7px 10px; border-radius:8px; color:var(--ink-soft); text-decoration:none;
+  font-size:13.5px; border-left:2px solid transparent;
+}
+.toc a:hover{background:var(--surface-2); color:var(--ink);}
+.toc a.active{color:var(--accent-strong); border-left-color:var(--accent); background:var(--accent-soft); font-weight:600;}
+@media (max-width:860px){
+  .toc{position:static; flex-direction:row; flex-wrap:wrap; overflow-x:auto; gap:6px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+  .toc-title{display:none;}
+  .toc a{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+  .toc a.active{border-left:none; border-bottom-color:var(--accent);}
+}
+
+section.block{scroll-margin-top:20px; margin-bottom:64px;}
+.block-head{margin-bottom:22px;}
+.block-num{font-family:var(--font-mono); font-size:12px; color:var(--accent-strong); letter-spacing:.08em;}
+.block h2{font-size:clamp(22px,3vw,30px); margin-top:4px;}
+.block .sub{color:var(--ink-soft); font-size:15px; max-width:64ch;}
+
+/* ============ CARDS / PANELS ============ */
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 24px; box-shadow:var(--shadow);
+}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media (max-width:760px){ .grid-2,.grid-4,.grid-3{grid-template-columns:1fr;} }
+
+.tag{
+  display:inline-flex; align-items:center; font-family:var(--font-mono); font-size:11px;
+  letter-spacing:.05em; text-transform:uppercase; padding:3px 9px; border-radius:999px; font-weight:600;
+}
+.tag.dom{background:var(--dom-tag-soft); color:var(--dom-tag);}
+.tag.rec{background:var(--rec-tag-soft); color:var(--rec-tag);}
+.tag.xlink{background:var(--xlink-tag-soft); color:var(--xlink-tag);}
+
+/* ============ LEGEND ============ */
+.legend-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface);}
+.legend-cell{display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--line); border-right:1px solid var(--line);}
+.legend-cell:nth-child(3n){border-right:none;}
+.legend-grid .legend-cell:nth-last-child(-n+3){border-bottom:none;}
+.legend-cell svg{flex:none;}
+.legend-cell span{font-size:13.5px; color:var(--ink-soft); line-height:1.3;}
+@media (max-width:680px){
+  .legend-grid{grid-template-columns:repeat(2,1fr);}
+  .legend-cell:nth-child(3n){border-right:1px solid var(--line);}
+  .legend-cell:nth-child(2n){border-right:none;}
+  .legend-grid .legend-cell:nth-last-child(-n+3){border-bottom:1px solid var(--line);}
+  .legend-grid .legend-cell:nth-last-child(-n+2){border-bottom:none;}
+}
+
+/* ============ PEDIGREE DIAGRAM ============ */
+.pedigree-scroll{overflow-x:auto; background:var(--pedigree-surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 10px;}
+.pedigree-wrap{position:relative; margin:0 auto;}
+.pedigree-wrap svg{display:block;}
+.p-label{position:absolute; transform:translateX(-50%); text-align:center; pointer-events:none;}
+.p-label.id{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); top:0;}
+.p-label.name{font-family:var(--font-body); font-size:11.5px; color:var(--ink-soft); font-weight:500; white-space:nowrap;}
+.p-label.geno{font-family:var(--font-mono); font-size:12.5px; font-weight:600; color:var(--accent-strong); opacity:0; transition:opacity .25s ease; white-space:nowrap;}
+.pedigree-wrap.revealed .p-label.geno{opacity:1;}
+.p-label.geno.unknown{color:var(--ink-faint); font-weight:500;}
+.gen-roman{position:absolute; font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); left:0;}
+
+.diagram-toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:14px;}
+.btn{
+  font-family:var(--font-body); font-weight:600; font-size:13.5px; cursor:pointer;
+  border:1px solid var(--line-strong); background:var(--surface); color:var(--ink);
+  padding:9px 16px; border-radius:999px; transition:background .15s, color .15s, border-color .15s;
+}
+.btn:hover{background:var(--surface-2);}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+.btn.primary:hover{background:var(--accent-strong); border-color:var(--accent-strong);}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+.btn-row{display:flex; gap:8px;}
+
+.q-box{
+  margin-top:16px; border:1px dashed var(--line-strong); border-radius:var(--radius-sm);
+  padding:16px 18px; background:var(--surface-2);
+}
+.q-box .q-text{font-weight:600; color:var(--ink); margin-bottom:10px;}
+.reveal-panel{display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);}
+.reveal-panel.open{display:block;}
+.reveal-panel p{font-size:14px;}
+
+/* ============ STEPPER (Thomas family) ============ */
+.stepper-nav{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px;}
+.step-dots{display:flex; gap:6px;}
+.step-dot{width:8px; height:8px; border-radius:50%; background:var(--line-strong); cursor:pointer; border:none; padding:0;}
+.step-dot.active{background:var(--accent); width:22px; border-radius:5px;}
+.step-caption{background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:6px; padding:12px 16px; margin-top:14px; font-size:14.5px; color:var(--ink);}
+.step-caption b{color:var(--accent-strong);}
+
+/* ============ PATTERN CARDS ============ */
+.pattern-card{display:flex; flex-direction:column; gap:12px;}
+.pattern-card h4{font-size:16px; margin-bottom:2px;}
+.pattern-card ul{margin:0; padding-left:18px; font-size:13.5px; color:var(--ink-soft);}
+.pattern-card li{margin-bottom:5px;}
+.pattern-mini{position:relative; background:var(--pedigree-surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:10px 6px; display:flex; justify-content:center; overflow:hidden;}
+
+/* ============ RULES LIST ============ */
+.rules-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px;}
+.rules-list li{display:flex; gap:14px; align-items:flex-start;}
+.rule-num{
+  flex:none; width:28px; height:28px; border-radius:50%; background:var(--accent-soft); color:var(--accent-strong);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:13px;
+}
+.rules-list p{margin:0; font-size:14.5px;}
+
+/* ============ PUNNETT ============ */
+.punnett{border-collapse:collapse; font-family:var(--font-mono); font-size:13px; margin:10px 0;}
+.punnett th,.punnett td{border:1px solid var(--line-strong); padding:8px 12px; text-align:center;}
+.punnett th{background:var(--surface-2); color:var(--ink-soft); font-weight:600;}
+.punnett td.aff{background:var(--warn-soft); color:var(--warn); font-weight:700;}
+.punnett td.unaff{background:var(--rec-tag-soft); color:var(--rec-tag); font-weight:700;}
+
+/* ============ QUIZ ============ */
+.quiz-item{border-bottom:1px solid var(--line); padding:20px 0;}
+.quiz-item:last-child{border-bottom:none;}
+.quiz-q{font-weight:600; margin-bottom:10px; font-size:15px;}
+.quiz-opts{display:flex; flex-direction:column; gap:8px;}
+.quiz-opt{
+  display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border:1px solid var(--line);
+  border-radius:8px; cursor:pointer; font-size:14px; transition:background .15s,border-color .15s;
+}
+.quiz-opt:hover{background:var(--surface-2);}
+.quiz-opt input{margin-top:3px;}
+.quiz-opt.correct{border-color:var(--rec-tag); background:var(--rec-tag-soft);}
+.quiz-opt.incorrect{border-color:var(--warn); background:var(--warn-soft);}
+.quiz-fb{display:none; margin-top:10px; font-size:13.5px; padding:10px 12px; border-radius:8px; background:var(--surface-2);}
+.quiz-fb.show{display:block;}
+.score-banner{
+  display:none; background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent-strong);
+  padding:16px 20px; border-radius:var(--radius-sm); font-weight:600; margin-top:8px; text-align:center;
+}
+.score-banner.show{display:block;}
+
+/* ============ MISC ============ */
+.callout{border-radius:var(--radius); padding:20px 22px; border:1px solid var(--line);}
+.callout.accent{background:var(--accent-soft); border-color:var(--accent);}
+.footnote{font-size:13px; color:var(--ink-faint); margin-top:8px;}
+.divider{height:1px; background:var(--line); margin:0 0 64px;}
+footer{text-align:center; color:var(--ink-faint); font-size:13px; padding:30px 20px 60px;}
+.kicker-small{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); margin-bottom:6px;}
+</style>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Honors Biology &middot; Genetics</div>
+    <h1>Pedigree Detective</h1>
+    <p class="lede">A pedigree turns a family tree into an evidence board. Learn to draw one from a family story, then read it back like a detective — spotting inheritance patterns and pinning down exact genotypes from indirect clues.</p>
+    <div class="hero-facts">
+      <div class="hero-fact">🧬 <b>4</b> inheritance patterns</div>
+      <div class="hero-fact">✏️ <b>1</b> guided build-along family</div>
+      <div class="hero-fact">🔍 <b>7</b> worked pedigrees</div>
+      <div class="hero-fact">✅ <b>5</b>-question self-check</div>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="layout">
+    <nav class="toc" id="toc">
+      <div class="toc-title">On this page</div>
+      <a href="#what-is">1. What is a pedigree?</a>
+      <a href="#symbols">2. Symbol key</a>
+      <a href="#build">3. Draw one, step by step</a>
+      <a href="#read">4. Read the pattern</a>
+      <a href="#genotype-rules">5. Genotype detective rules</a>
+      <a href="#worked">6. Worked pedigrees</a>
+      <a href="#practice">7. Practice scenarios</a>
+      <a href="#quiz">8. Self-check quiz</a>
+    </nav>
+
+    <main>
+
+      <!-- 1. WHAT IS A PEDIGREE -->
+      <section class="block" id="what-is">
+        <div class="block-head">
+          <div class="block-num">01</div>
+          <h2>What is a pedigree, and why bother?</h2>
+        </div>
+        <p>A <b>pedigree</b> is a diagram of a family tree that tracks how a specific trait — a disorder, a blood type, a physical feature — has passed from generation to generation. Instead of listing family members, it uses standardized shapes and lines so that anyone trained to read it can immediately see who is related to whom, who shows the trait, and who married into the family.</p>
+        <p>Biologists and genetic counselors use real pedigrees to figure out <i>how</i> a trait is inherited (dominant? recessive? carried on the X chromosome?) and to calculate the <i>probability</i> that a future child will inherit it. You'll do exactly that in this guide: build a pedigree from a written family history, then work backward from a finished pedigree to deduce genotypes that are never directly stated.</p>
+        <div class="card" style="margin-top:18px;">
+          <div class="grid-3">
+            <div>
+              <div class="kicker-small">Generations</div>
+              <p style="margin:0; font-size:14px;">Rows are numbered with Roman numerals (I, II, III…), oldest at the top. Everyone in one row is the same generation.</p>
+            </div>
+            <div>
+              <div class="kicker-small">Individuals</div>
+              <p style="margin:0; font-size:14px;">Each person gets an Arabic number within their row, left to right, e.g. individual <span class="mono">II-3</span>.</p>
+            </div>
+            <div>
+              <div class="kicker-small">Lines</div>
+              <p style="margin:0; font-size:14px;">A horizontal line joins two mates. A vertical line drops from that union to their children.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. SYMBOLS -->
+      <section class="block" id="symbols">
+        <div class="block-head">
+          <div class="block-num">02</div>
+          <h2>The symbol key</h2>
+          <p class="sub">Every pedigree in this guide — and almost every one you'll ever see — uses this same set of shapes. Shape encodes <i>sex</i>; fill encodes <i>phenotype</i>.</p>
+        </div>
+        <div class="legend-grid" id="legend"></div>
+        <p class="footnote">Some textbooks add a half-filled shape with a dot in the middle for a known heterozygous carrier who doesn't show the trait. It isn't in this worksheet's key, so we'll write carrier genotypes out in words instead — but you may see that symbol elsewhere.</p>
+      </section>
+
+      <!-- 3. BUILD ONE -->
+      <section class="block" id="build">
+        <div class="block-head">
+          <div class="block-num">03</div>
+          <h2>Draw one, step by step</h2>
+          <p class="sub">The Thomas family, described in words: <i>"Tom and Diane have three children — Anna, Mary, and Teddy, oldest to youngest. Anna is married with two children, Will and Vanessa. Mary is married with one child, Patrick. Teddy is unmarried. Everyone is right-handed except Tom, Anna, and Vanessa. Right-handedness is dominant."</i></p>
+        </div>
+        <div class="card">
+          <div class="pedigree-scroll">
+            <div class="pedigree-wrap" id="thomas-diagram"></div>
+          </div>
+          <div class="step-caption" id="step-caption"></div>
+          <div class="stepper-nav">
+            <div class="btn-row">
+              <button class="btn" id="step-prev">← Back</button>
+              <button class="btn primary" id="step-next">Next step →</button>
+            </div>
+            <div class="step-dots" id="step-dots"></div>
+          </div>
+        </div>
+        <div class="callout accent" style="margin-top:18px;">
+          <b>The five moves you just made, every time:</b>
+          <ol style="margin:10px 0 0; padding-left:20px; font-size:14.5px;">
+            <li>Place a generation's couple, oldest generation first, and join them with a horizontal line.</li>
+            <li>Drop a single line from the middle of that marriage line, then branch it into a horizontal "sibling line" above the children, oldest child on the left.</li>
+            <li>Give every child their own vertical stem down from the sibling line.</li>
+            <li>Fill in shapes for anyone who shows the trait; leave everyone else outlined.</li>
+            <li>Repeat for each spouse who marries into the family and each new generation, then label rows I, II, III… and number each person left to right.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 4. READING PATTERNS -->
+      <section class="block" id="read">
+        <div class="block-head">
+          <div class="block-num">04</div>
+          <h2>Read the pattern before you touch a single genotype</h2>
+          <p class="sub">Before assigning any letters, scan the whole pedigree for these four tell-tale shapes. They tell you which inheritance model to apply.</p>
+        </div>
+        <div class="grid-4" id="pattern-cards"></div>
+      </section>
+
+      <!-- 5. GENOTYPE RULES -->
+      <section class="block" id="genotype-rules">
+        <div class="block-head">
+          <div class="block-num">05</div>
+          <h2>Five rules for pinning down a genotype</h2>
+          <p class="sub">A pedigree only ever shows you <i>phenotypes</i> (filled or not). Genotype is something you deduce — sometimes with total certainty, sometimes not at all.</p>
+        </div>
+        <div class="card">
+          <ol class="rules-list">
+            <li><span class="rule-num">1</span><p><b>An affected individual with a recessive trait is homozygous recessive.</b> There's no other way to show a recessive phenotype, so <span class="mono">aa</span> is certain the moment you see a filled shape.</p></li>
+            <li><span class="rule-num">2</span><p><b>Two unaffected parents with an affected (recessive) child are both obligate carriers.</b> Each parent must have donated a recessive allele, so both are heterozygous — even though neither shows the trait.</p></li>
+            <li><span class="rule-num">3</span><p><b>Any child of a homozygous-recessive parent must carry at least one recessive allele.</b> If that child is unaffected, the other allele — from the other parent — must be dominant, which makes the child's genotype heterozygous for certain, not just probable.</p></li>
+            <li><span class="rule-num">4</span><p><b>On the X chromosome, sons get their only X from their mother, and daughters get one X from each parent.</b> An affected father can never pass an X-linked trait to his sons (they get his Y), but he always passes his X — and whatever's on it — to every daughter.</p></li>
+            <li><span class="rule-num">5</span><p><b>Some genotypes simply can't be pinned down from the pedigree given.</b> When neither a person's parents nor their children give it away, the honest answer is "heterozygous or homozygous dominant — can't tell," written as <span class="mono">A_</span>. That's not a wrong answer; it's the correct one.</p></li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 6. WORKED PEDIGREES -->
+      <section class="block" id="worked">
+        <div class="block-head">
+          <div class="block-num">06</div>
+          <h2>Worked pedigrees</h2>
+          <p class="sub">Click <b>Reveal genotypes</b> on each diagram to check your own reasoning, then try the question underneath before opening the solution.</p>
+        </div>
+
+        <!-- BLUE EYES INTRO -->
+        <div class="card" style="margin-bottom:28px;">
+          <span class="tag rec">Autosomal recessive</span>
+          <h3 style="margin-top:10px;">Warm-up: blue eyes</h3>
+          <p style="font-size:14.5px;">Blue eyes (<span class="mono">bb</span>) is recessive to brown eyes (<span class="mono">B_</span>). Generation I is the grandparents; Generation II is their children plus a son-in-law; Generation III is one grandchild.</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-blueeyes"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-blueeyes">👁 Reveal genotypes</button>
+          </div>
+          <p class="footnote" style="margin-top:14px;">Notice: I-1 is unfilled (brown eyes) but must be <span class="mono">Bb</span> — his daughter II-2 is <span class="mono">bb</span>, so he had to have contributed a <span class="mono">b</span>. You determined a "hidden" genotype from a child two branches away.</p>
+        </div>
+
+        <!-- ALBINISM -->
+        <div class="card" style="margin-bottom:28px;" id="pedigree-albinism">
+          <span class="tag rec">Autosomal recessive</span>
+          <h3 style="margin-top:10px;">Pedigree 1 — Albinism</h3>
+          <p style="font-size:14.5px;">Albinism is caused by a recessive allele: use <span class="mono">D</span> for the normal-pigment allele and <span class="mono">d</span> for albinism.</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-albinism"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-albinism">👁 Reveal genotypes</button>
+          </div>
+          <div class="q-box">
+            <div class="q-text">If individuals II-1 and II-2 had another child, what's the chance it will have normal pigment?</div>
+            <button class="btn solve-btn" data-target="sol-albinism">Show solution</button>
+            <div class="reveal-panel" id="sol-albinism">
+              <p><b>II-1 = <span class="mono">Dd</span></b> (he must carry <i>d</i> — his daughter III-1 is <span class="mono">dd</span>, and the only way she gets a <i>d</i> from her father is if he carries one). <b>II-2 = <span class="mono">dd</span></b> (affected, so obligate).</p>
+              <p>Cross <span class="mono">Dd × dd</span>:</p>
+              <table class="punnett">
+                <tr><th></th><th>D</th><th>d</th></tr>
+                <tr><th>d</th><td class="unaff">Dd</td><td class="aff">dd</td></tr>
+                <tr><th>d</th><td class="unaff">Dd</td><td class="aff">dd</td></tr>
+              </table>
+              <p><b>Answer: 1/2 (50%)</b> chance the next child has normal pigmentation, and 1/2 (50%) chance of albinism.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEMOPHILIA -->
+        <div class="card" style="margin-bottom:28px;" id="pedigree-hemophilia">
+          <span class="tag xlink">X-linked recessive</span>
+          <h3 style="margin-top:10px;">Pedigree 2 — Hemophilia</h3>
+          <p style="font-size:14.5px;">Hemophilia is caused by a recessive allele on the X chromosome (<span class="mono">X<sup>h</sup></span>). Normal clotting is <span class="mono">X<sup>H</sup></span>. A hemophiliac female would need to be <span class="mono">X<sup>h</sup>X<sup>h</sup></span>; a carrier female is <span class="mono">X<sup>H</sup>X<sup>h</sup></span> and clots normally.</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-hemophilia"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-hemophilia">👁 Reveal genotypes</button>
+          </div>
+          <div class="q-box">
+            <div class="q-text">If III-2 (the hemophiliac son) marries a woman who is <span class="mono">X<sup>H</sup>X<sup>H</sup></span>, what's the chance their first child has hemophilia?</div>
+            <button class="btn solve-btn" data-target="sol-hemophilia">Show solution</button>
+            <div class="reveal-panel" id="sol-hemophilia">
+              <p>Cross <span class="mono">X<sup>h</sup>Y × X<sup>H</sup>X<sup>H</sup></span>:</p>
+              <table class="punnett">
+                <tr><th></th><th>X<sup>h</sup></th><th>Y</th></tr>
+                <tr><th>X<sup>H</sup></th><td class="unaff">X<sup>H</sup>X<sup>h</sup></td><td class="unaff">X<sup>H</sup>Y</td></tr>
+                <tr><th>X<sup>H</sup></th><td class="unaff">X<sup>H</sup>X<sup>h</sup></td><td class="unaff">X<sup>H</sup>Y</td></tr>
+              </table>
+              <p><b>Answer: 0%.</b> Every daughter becomes an unaffected carrier (<span class="mono">X<sup>H</sup>X<sup>h</sup></span>) and every son is unaffected (<span class="mono">X<sup>H</sup>Y</span>) — none of their children can have hemophilia, though every daughter silently carries the allele forward.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RICKETS -->
+        <div class="card" style="margin-bottom:28px;" id="pedigree-rickets">
+          <span class="tag xlink">X-linked dominant</span>
+          <h3 style="margin-top:10px;">Pedigree 3 — Vitamin D–resistant rickets</h3>
+          <p style="font-size:14.5px;">This form of rickets is caused by a <i>dominant</i> allele on the X chromosome (<span class="mono">X<sup>R</sup></span>); normal is recessive <span class="mono">X<sup>r</sup></span>. Dominant X-linked traits give a distinctive pattern — watch what happens to the sons of an affected father.</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-rickets"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-rickets">👁 Reveal genotypes</button>
+          </div>
+          <div class="q-box">
+            <div class="q-text">If I-1 had the same phenotype as his wife (affected, <span class="mono">X<sup>R</sup>Y</span>) instead of being unaffected, what fraction of their children would have rickets?</div>
+            <button class="btn solve-btn" data-target="sol-rickets">Show solution</button>
+            <div class="reveal-panel" id="sol-rickets">
+              <p>Cross <span class="mono">X<sup>R</sup>Y × X<sup>R</sup>X<sup>r</sup></span>:</p>
+              <table class="punnett">
+                <tr><th></th><th>X<sup>R</sup></th><th>X<sup>r</sup></th></tr>
+                <tr><th>X<sup>R</sup></th><td class="aff">X<sup>R</sup>X<sup>R</sup></td><td class="aff">X<sup>R</sup>X<sup>r</sup></td></tr>
+                <tr><th>Y</th><td class="aff">X<sup>R</sup>Y</td><td class="unaff">X<sup>r</sup>Y</td></tr>
+              </table>
+              <p><b>All daughters (100%) are affected</b> — they always receive their father's only X, which carries <span class="mono">X<sup>R</sup></span>. <b>Half of sons (50%)</b> are affected, depending on which X they receive from mom. Averaged across all children: <b>3 out of 4 (75%)</b> will have rickets.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PTC -->
+        <div class="card" style="margin-bottom:8px;" id="pedigree-ptc">
+          <span class="tag dom">Autosomal dominant</span>
+          <h3 style="margin-top:10px;">Pedigree 4 — PTC tasting</h3>
+          <p style="font-size:14.5px;">The ability to taste the bitter chemical PTC is dominant (<span class="mono">A</span>); nontasting is recessive (<span class="mono">aa</span>). Two separate families merge here through a marriage in Generation II.</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-ptc"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-ptc">👁 Reveal genotypes</button>
+          </div>
+          <div class="q-box">
+            <div class="q-text">If I-4 (right-hand grandmother) had instead married III-4 (her own great-grandson-in-law's generation — a nontaster), what's the probability each of their children is a taster?</div>
+            <button class="btn solve-btn" data-target="sol-ptc">Show solution</button>
+            <div class="reveal-panel" id="sol-ptc">
+              <p>I-4 must be <span class="mono">Aa</span> — her daughter II-4 is a nontaster (<span class="mono">aa</span>), so I-4 had to contribute an <span class="mono">a</span> even though she tastes PTC herself. III-4 is a nontaster, so he's <span class="mono">aa</span>.</p>
+              <p>Cross <span class="mono">Aa × aa</span>:</p>
+              <table class="punnett">
+                <tr><th></th><th>A</th><th>a</th></tr>
+                <tr><th>a</th><td class="unaff">Aa</td><td class="aff">aa</td></tr>
+                <tr><th>a</th><td class="unaff">Aa</td><td class="aff">aa</td></tr>
+              </table>
+              <p><b>Answer: 1/2 (50%)</b> chance each child is a taster.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. PRACTICE SCENARIOS -->
+      <section class="block" id="practice">
+        <div class="block-head">
+          <div class="block-num">07</div>
+          <h2>Practice scenarios</h2>
+          <p class="sub">These start from a written description, not a finished diagram — sketch your own pedigree first, then check it against the one below.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:28px;">
+          <span class="tag rec">Autosomal recessive &middot; carrier probability</span>
+          <h3 style="margin-top:10px;">Scenario 1 — Cystic fibrosis</h3>
+          <p style="font-size:14.5px;">A woman's sister has cystic fibrosis (recessive, <span class="mono">cc</span>). Neither of their parents has the disease. What's the chance the mother is a carrier? What's the chance the woman herself is a carrier?</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-cf"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-cf">👁 Reveal genotypes</button>
+            <button class="btn solve-btn" data-target="sol-cf">Show solution</button>
+          </div>
+          <div class="reveal-panel" id="sol-cf">
+            <p><b>Chance the mother is a carrier: 100%, not a probability at all.</b> Both parents are phenotypically normal, yet their daughter is <span class="mono">cc</span>. The only way an unaffected parent contributes a <span class="mono">c</span> allele is by being a heterozygous carrier (<span class="mono">Cc</span>) — so both parents are obligate carriers, guaranteed.</p>
+            <p><b>Chance the woman is a carrier: 2/3.</b> Cross <span class="mono">Cc × Cc</span> gives offspring in a 1 <span class="mono">CC</span> : 2 <span class="mono">Cc</span> : 1 <span class="mono">cc</span> ratio. We're told the woman is unaffected, so we drop the <span class="mono">cc</span> outcome and ask only among the remaining 3 possibilities: 2 of those 3 are <span class="mono">Cc</span>. That gives 2/3 — noticeably higher than the "default" 1/2 you might have guessed, because we've already used the information that she's unaffected.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:28px;">
+          <span class="tag dom">Autosomal dominant &middot; late onset</span>
+          <h3 style="margin-top:10px;">Scenario 2 — Huntington's disease</h3>
+          <p style="font-size:14.5px;">Huntington's disease is caused by a dominant allele but its symptoms don't appear until around age 40. John's father has just begun showing symptoms. What's the chance John will develop the disease?</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-huntington"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-huntington">👁 Reveal genotypes</button>
+            <button class="btn solve-btn" data-target="sol-huntington">Show solution</button>
+          </div>
+          <div class="reveal-panel" id="sol-huntington">
+            <p>Huntington's is rare enough that an affected person is assumed heterozygous (<span class="mono">Hh</span>) rather than homozygous. John's mother is unaffected (<span class="mono">hh</span>).</p>
+            <p>Cross <span class="mono">Hh × hh</span> → 1/2 <span class="mono">Hh</span> (will eventually develop the disease) : 1/2 <span class="mono">hh</span> (won't).</p>
+            <p><b>Answer: 50%.</b> Late onset doesn't change the genetics — it just means John (and everyone he might have children with) may carry the allele for decades without knowing it. This is exactly why dominant, late-onset conditions raise such difficult questions about genetic testing.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="tag">Multiple alleles &middot; codominance</span>
+          <h3 style="margin-top:10px;">Scenario 3 — ABO blood type</h3>
+          <p style="font-size:14.5px;">Blood type uses three alleles: <span class="mono">I<sup>A</sup></span> and <span class="mono">I<sup>B</sup></span> are codominant with each other, and both are dominant over <span class="mono">i</span>. Two individuals in this family tree (shown with a <span class="mono">?</span>) were never typed directly — work out their blood group from their children.</p>
+          <div class="pedigree-scroll"><div class="pedigree-wrap" id="dia-blood"></div></div>
+          <div class="diagram-toolbar">
+            <button class="btn reveal-btn" data-target="dia-blood">👁 Reveal genotypes</button>
+            <button class="btn solve-btn" data-target="sol-blood">Show solution</button>
+          </div>
+          <div class="reveal-panel" id="sol-blood">
+            <p><b>I-2 must be type A (<span class="mono">I<sup>A</sup>i</span>).</b> Her husband I-1 is type O (<span class="mono">ii</span>) and can only ever pass an <span class="mono">i</span>. Their son II-3 is type O, so I-2 must also carry an <span class="mono">i</span>. Their daughter II-2 is type A, and since dad has no <span class="mono">I<sup>A</sup></span> to give, that allele had to come from mom — so I-2 is <span class="mono">I<sup>A</sup>i</span>.</p>
+            <p><b>The marry-in husband of II-2 must be type B (<span class="mono">I<sup>B</sup>i</span>).</b> Their children are III-1 (type B) and III-2 (type O). II-2 can only pass <span class="mono">I<sup>A</sup></span> or <span class="mono">i</span>, never <span class="mono">I<sup>B</sup></span> — so the <span class="mono">I<sup>B</sup></span> in III-1 must be his, and the <span class="mono">i</span> in III-2 must also be his (his own genotype is therefore fully pinned down as <span class="mono">I<sup>B</sup>i</span>, even though he was never typed).</p>
+            <p><b>One individual (II-1) can't be fully determined.</b> She's a child of a type-O father and a type-A (<span class="mono">I<sup>A</sup>i</span>) mother with no children of her own shown, so she could be type O (<span class="mono">ii</span>) or type A (<span class="mono">I<sup>A</sup>i</span>) — the pedigree simply doesn't say, and that's a legitimate final answer.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. QUIZ -->
+      <section class="block" id="quiz">
+        <div class="block-head">
+          <div class="block-num">08</div>
+          <h2>Self-check quiz</h2>
+          <p class="sub">Five questions pulling together everything above. Pick an answer for each, then check your work.</p>
+        </div>
+        <div class="card">
+          <div id="quiz-container"></div>
+          <button class="btn primary" id="quiz-check" style="margin-top:6px;">Check my answers</button>
+          <div class="score-banner" id="score-banner"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<footer>Built for Honors Biology &middot; genetics unit &middot; worked examples adapted from a classroom pedigree-practice worksheet.</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   GENERIC PEDIGREE RENDERER
+   ============================================================ */
+const SIZE = 30;     // symbol width/height
+const COLW = 84;      // px per x-unit
+const ROWH = 118;      // px per generation
+const MARGIN_L = 46;   // room for roman numerals
+const MARGIN_T = 26;
+const MARGIN_B = 34;
+const MARGIN_R = 24;
+
+function px(x){ return MARGIN_L + x*COLW; }
+function py(gen){ return MARGIN_T + (gen-1)*ROWH; }
+
+function esc(s){ return (s===undefined||s===null) ? "" : String(s); }
+
+function renderPedigree(containerId, data){
+  const host = document.getElementById(containerId);
+  if(!host) return;
+  const people = data.people;
+  const byId = {}; people.forEach(p=>byId[p.id]=p);
+  const couples = data.couples || [];
+  const groups = data.groups || [];
+
+  const maxX = Math.max(...people.map(p=>p.x));
+  const maxGen = Math.max(...people.map(p=>p.gen));
+  const width = px(maxX) + SIZE + MARGIN_R;
+  const height = py(maxGen) + SIZE + MARGIN_B;
+
+  host.style.width = width + "px";
+  host.style.height = height + "px";
+
+  let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+  const lineColor = "var(--line-strong)";
+
+  // couple lines
+  couples.forEach(c=>{
+    const a = byId[c.a], b = byId[c.b];
+    const y = py(a.gen) + SIZE/2;
+    const x1 = px(a.x) + (a.x<b.x?SIZE:0);
+    const x2 = px(b.x) + (b.x<a.x?SIZE:0);
+    svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${lineColor}" stroke-width="1.6"/>`;
+    if(c.consang){
+      svg += `<line x1="${x1}" y1="${y+3}" x2="${x2}" y2="${y+3}" stroke="${lineColor}" stroke-width="1.6"/>`;
+    }
+  });
+
+  // group (parent->children) connectors
+  groups.forEach(g=>{
+    const parents = g.parents.map(id=>byId[id]);
+    const gen = parents[0].gen;
+    const unionY = py(gen) + SIZE/2;
+    let unionX;
+    if(parents.length===2){
+      unionX = (px(parents[0].x) + px(parents[1].x))/2 + SIZE/2;
+    } else {
+      unionX = px(parents[0].x) + SIZE/2;
+    }
+    const busY = py(gen) + SIZE + 24;
+    const childXs = g.children.map(id=>px(byId[id].x)+SIZE/2);
+    const allXs = childXs.concat([unionX]);
+    const busXmin = Math.min(...allXs);
+    const busXmax = Math.max(...allXs);
+
+    svg += `<line x1="${unionX}" y1="${unionY}" x2="${unionX}" y2="${busY}" stroke="${lineColor}" stroke-width="1.6"/>`;
+    if(busXmax>busXmin){
+      svg += `<line x1="${busXmin}" y1="${busY}" x2="${busXmax}" y2="${busY}" stroke="${lineColor}" stroke-width="1.6"/>`;
+    }
+    g.children.forEach(id=>{
+      const ch = byId[id];
+      const cx = px(ch.x)+SIZE/2;
+      const topY = py(ch.gen);
+      svg += `<line x1="${cx}" y1="${busY}" x2="${cx}" y2="${topY}" stroke="${lineColor}" stroke-width="1.6"/>`;
+    });
+  });
+
+  // symbols
+  people.forEach(p=>{
+    const x = px(p.x), y = py(p.gen);
+    const fill = p.affected ? "var(--pedigree-fill)" : "var(--pedigree-surface)";
+    const stroke = "var(--pedigree-stroke)";
+    if(p.highlight){
+      const r = SIZE/2 + 8;
+      svg += `<circle cx="${x+SIZE/2}" cy="${y+SIZE/2}" r="${r}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3,3"/>`;
+    }
+    if(p.sex==="M"){
+      svg += `<rect x="${x}" y="${y}" width="${SIZE}" height="${SIZE}" fill="${fill}" stroke="${stroke}" stroke-width="1.8"/>`;
+    } else {
+      svg += `<circle cx="${x+SIZE/2}" cy="${y+SIZE/2}" r="${SIZE/2}" fill="${fill}" stroke="${stroke}" stroke-width="1.8"/>`;
+    }
+    if(p.dead){
+      svg += `<line x1="${x-4}" y1="${y+SIZE+4}" x2="${x+SIZE+4}" y2="${y-4}" stroke="${stroke}" stroke-width="1.6"/>`;
+    }
+  });
+
+  svg += `</svg>`;
+
+  // labels overlay
+  let labels = "";
+  const gens = [...new Set(people.map(p=>p.gen))].sort((a,b)=>a-b);
+  gens.forEach(g=>{
+    labels += `<div class="gen-roman" style="top:${py(g)+SIZE/2-7}px;">${toRoman(g)}</div>`;
+  });
+  people.forEach(p=>{
+    const x = px(p.x)+SIZE/2, y = py(p.gen);
+    if(p.label){
+      labels += `<div class="p-label id" style="left:${x}px; top:${y+SIZE+4}px;">${esc(p.label)}</div>`;
+    }
+    if(p.name){
+      labels += `<div class="p-label name" style="left:${x}px; top:${y-16}px;">${esc(p.name)}</div>`;
+    }
+    if(p.geno){
+      const cls = p.unknown ? "p-label geno unknown" : "p-label geno";
+      labels += `<div class="${cls}" style="left:${x}px; top:${y+SIZE+(p.label?18:4)}px;">${p.geno}</div>`;
+    }
+  });
+
+  host.innerHTML = svg + labels;
+}
+
+function toRoman(n){
+  const map = ["","I","II","III","IV","V","VI"];
+  return map[n] || n;
+}
+
+/* ============================================================
+   LEGEND
+   ============================================================ */
+function legendSymbol(kind){
+  const s = 26;
+  switch(kind){
+    case "male-un": return `<svg width="${s+4}" height="${s+4}"><rect x="2" y="2" width="${s}" height="${s}" fill="var(--pedigree-surface)" stroke="var(--pedigree-stroke)" stroke-width="1.8"/></svg>`;
+    case "male-af": return `<svg width="${s+4}" height="${s+4}"><rect x="2" y="2" width="${s}" height="${s}" fill="var(--pedigree-fill)" stroke="var(--pedigree-stroke)" stroke-width="1.8"/></svg>`;
+    case "female-un": return `<svg width="${s+4}" height="${s+4}"><circle cx="${s/2+2}" cy="${s/2+2}" r="${s/2}" fill="var(--pedigree-surface)" stroke="var(--pedigree-stroke)" stroke-width="1.8"/></svg>`;
+    case "female-af": return `<svg width="${s+4}" height="${s+4}"><circle cx="${s/2+2}" cy="${s/2+2}" r="${s/2}" fill="var(--pedigree-fill)" stroke="var(--pedigree-stroke)" stroke-width="1.8"/></svg>`;
+    case "male-dead": return `<svg width="${s+4}" height="${s+4}"><rect x="6" y="6" width="${s-8}" height="${s-8}" fill="var(--pedigree-fill)" stroke="var(--pedigree-stroke)" stroke-width="1.6"/></svg>`;
+    case "female-dead": return `<svg width="${s+4}" height="${s+4}"><circle cx="${s/2+2}" cy="${s/2+2}" r="${s/2-4}" fill="var(--pedigree-fill)" stroke="var(--pedigree-stroke)" stroke-width="1.6"/></svg>`;
+    case "twins": return `<svg width="46" height="${s+4}">
+        <line x1="23" y1="2" x2="12" y2="14" stroke="var(--pedigree-stroke)" stroke-width="1.6"/>
+        <line x1="23" y1="2" x2="34" y2="14" stroke="var(--pedigree-stroke)" stroke-width="1.6"/>
+        <circle cx="12" cy="20" r="8" fill="var(--pedigree-surface)" stroke="var(--pedigree-stroke)" stroke-width="1.6"/>
+        <circle cx="34" cy="20" r="8" fill="var(--pedigree-surface)" stroke="var(--pedigree-stroke)" stroke-width="1.6"/>
+      </svg>`;
+  }
+}
+function buildLegend(){
+  const items = [
+    ["male-un","Male, unaffected"],
+    ["male-af","Male, has the trait"],
+    ["female-un","Female, unaffected"],
+    ["female-af","Female, has the trait"],
+    ["male-dead","Male, died in infancy"],
+    ["twins","Identical twins"],
+    ["female-dead","Female, died in infancy"],
+  ];
+  const host = document.getElementById("legend");
+  host.innerHTML = items.map(([k,label])=>`<div class="legend-cell">${legendSymbol(k)}<span>${label}</span></div>`).join("");
+}
+
+/* ============================================================
+   DATA — WORKED PEDIGREES
+   ============================================================ */
+
+// Blue eyes intro
+const dataBlueEyes = {
+  people:[
+    {id:"I1",sex:"M",gen:1,x:1,affected:false,label:"1",geno:"Bb"},
+    {id:"I2",sex:"F",gen:1,x:2,affected:true,label:"2",geno:"bb"},
+    {id:"II1",sex:"M",gen:2,x:0,affected:false,label:"1",geno:"Bb"},
+    {id:"II2",sex:"F",gen:2,x:1,affected:true,label:"2",geno:"bb"},
+    {id:"II3",sex:"F",gen:2,x:2,affected:false,label:"3",geno:"Bb"},
+    {id:"II4",sex:"M",gen:2,x:3,affected:false,label:"4",geno:"Bb"},
+    {id:"III1",sex:"M",gen:3,x:0,affected:true,label:"1",geno:"bb"},
+  ],
+  couples:[{a:"I1",b:"I2"},{a:"II1",b:"II2"}],
+  groups:[
+    {parents:["I1","I2"],children:["II2","II3","II4"]},
+    {parents:["II1","II2"],children:["III1"]},
+  ]
+};
+
+// Albinism
+const dataAlbinism = {
+  people:[
+    {id:"I1",sex:"M",gen:1,x:1,affected:false,label:"1",geno:"Dd"},
+    {id:"I2",sex:"F",gen:1,x:2,affected:false,label:"2",geno:"Dd"},
+    {id:"II1",sex:"M",gen:2,x:0,affected:false,label:"1",geno:"Dd",highlight:true},
+    {id:"II2",sex:"F",gen:2,x:1,affected:true,label:"2",geno:"dd",highlight:true},
+    {id:"II3",sex:"M",gen:2,x:2,affected:false,label:"3",geno:"D_",unknown:true},
+    {id:"II4",sex:"F",gen:2,x:3,affected:true,label:"4",geno:"dd"},
+    {id:"II5",sex:"M",gen:2,x:4,affected:false,label:"5",geno:"Dd"},
+    {id:"II6",sex:"F",gen:2,x:5,affected:false,label:"6",geno:"Dd"},
+    {id:"III1",sex:"F",gen:3,x:0,affected:true,label:"1",geno:"dd"},
+    {id:"III2",sex:"M",gen:3,x:1,affected:false,label:"2",geno:"Dd"},
+    {id:"III3",sex:"F",gen:3,x:4.5,affected:true,label:"3",geno:"dd"},
+  ],
+  couples:[{a:"I1",b:"I2"},{a:"II1",b:"II2"},{a:"II5",b:"II6"}],
+  groups:[
+    {parents:["I1","I2"],children:["II2","II3","II4","II5"]},
+    {parents:["II1","II2"],children:["III1","III2"]},
+    {parents:["II5","II6"],children:["III3"]},
+  ]
+};
+
+// Hemophilia
+const dataHemophilia = {
+  people:[
+    {id:"A1",sex:"M",gen:1,x:1,affected:false,label:"1",geno:"X<sup>H</sup>Y"},
+    {id:"A2",sex:"F",gen:1,x:2,affected:false,label:"2",geno:"X<sup>H</sup>X_",unknown:true},
+    {id:"B1",sex:"M",gen:1,x:5,affected:false,label:"3",geno:"X<sup>H</sup>Y"},
+    {id:"B2",sex:"F",gen:1,x:6,affected:false,label:"4",geno:"X<sup>H</sup>X_",unknown:true},
+    {id:"AII1",sex:"M",gen:2,x:0,affected:false,label:"1",geno:"X<sup>H</sup>Y"},
+    {id:"AII2",sex:"F",gen:2,x:1,affected:false,label:"2",geno:"X<sup>H</sup>X_",unknown:true},
+    {id:"AII3",sex:"M",gen:2,x:2,affected:false,label:"3",geno:"X<sup>H</sup>Y"},
+    {id:"BII1",sex:"F",gen:2,x:3,affected:false,label:"4",geno:"X<sup>H</sup>X_",unknown:true},
+    {id:"BII2",sex:"M",gen:2,x:4,affected:false,label:"5",geno:"X<sup>H</sup>Y"},
+    {id:"BII3",sex:"F",gen:2,x:5,affected:false,label:"6",geno:"X<sup>H</sup>X<sup>h</sup>"},
+    {id:"D1",sex:"M",gen:2,x:6,affected:true,label:"7",geno:"X<sup>h</sup>Y"},
+    {id:"C1",sex:"M",gen:3,x:2.5,affected:false,label:"1",geno:"X<sup>H</sup>Y"},
+    {id:"C2",sex:"M",gen:3,x:5.5,affected:true,label:"2",geno:"X<sup>h</sup>Y",highlight:true},
+  ],
+  couples:[{a:"A1",b:"A2"},{a:"B1",b:"B2"},{a:"AII3",b:"BII1"},{a:"BII3",b:"D1"}],
+  groups:[
+    {parents:["A1","A2"],children:["AII1","AII2","AII3"]},
+    {parents:["B1","B2"],children:["BII1","BII2","BII3"]},
+    {parents:["AII3","BII1"],children:["C1"]},
+    {parents:["BII3","D1"],children:["C2"]},
+  ]
+};
+
+// Rickets
+const dataRickets = {
+  people:[
+    {id:"I1",sex:"M",gen:1,x:1,affected:false,label:"1",geno:"X<sup>r</sup>Y",highlight:true},
+    {id:"I2",sex:"F",gen:1,x:2,affected:true,label:"2",geno:"X<sup>R</sup>X<sup>r</sup>",highlight:true},
+    {id:"II1sp",sex:"M",gen:2,x:-1,affected:false,label:"1",geno:"X<sup>r</sup>Y"},
+    {id:"II1",sex:"F",gen:2,x:0,affected:true,label:"2",geno:"X<sup>R</sup>X<sup>r</sup>"},
+    {id:"II2",sex:"M",gen:2,x:1,affected:false,label:"3",geno:"X<sup>r</sup>Y"},
+    {id:"II3",sex:"F",gen:2,x:2,affected:false,label:"4",geno:"X<sup>r</sup>X<sup>r</sup>"},
+    {id:"II4",sex:"M",gen:2,x:3,affected:true,label:"5",geno:"X<sup>R</sup>Y"},
+    {id:"II4sp",sex:"F",gen:2,x:4,affected:false,label:"6",geno:"X<sup>r</sup>X<sup>r</sup>"},
+    {id:"III1",sex:"F",gen:3,x:-1,affected:true,label:"1",geno:"X<sup>R</sup>X<sup>r</sup>"},
+    {id:"III2",sex:"M",gen:3,x:0,affected:true,label:"2",geno:"X<sup>R</sup>Y"},
+    {id:"III3",sex:"M",gen:3,x:3,affected:false,label:"3",geno:"X<sup>r</sup>Y"},
+    {id:"III4",sex:"M",gen:3,x:4,affected:false,label:"4",geno:"X<sup>r</sup>Y"},
+    {id:"III5",sex:"M",gen:3,x:5,affected:false,label:"5",geno:"X<sup>r</sup>Y"},
+  ],
+  couples:[{a:"I1",b:"I2"},{a:"II1sp",b:"II1"},{a:"II4",b:"II4sp"}],
+  groups:[
+    {parents:["I1","I2"],children:["II1","II2","II3","II4"]},
+    {parents:["II1sp","II1"],children:["III1","III2"]},
+    {parents:["II4","II4sp"],children:["III3","III4","III5"]},
+  ]
+};
+
+// PTC
+const dataPTC = {
+  people:[
+    {id:"I1",sex:"M",gen:1,x:1,affected:true,label:"1",geno:"aa"},
+    {id:"I2",sex:"F",gen:1,x:2,affected:false,label:"2",geno:"Aa"},
+    {id:"I3",sex:"M",gen:1,x:5,affected:true,label:"3",geno:"aa"},
+    {id:"I4",sex:"F",gen:1,x:6,affected:false,label:"4",geno:"Aa",highlight:true},
+    {id:"II1",sex:"M",gen:2,x:0,affected:false,label:"1",geno:"Aa"},
+    {id:"II2",sex:"F",gen:2,x:1,affected:false,label:"2",geno:"Aa"},
+    {id:"II3",sex:"M",gen:2,x:2,affected:false,label:"3",geno:"Aa"},
+    {id:"II4",sex:"F",gen:2,x:3,affected:true,label:"4",geno:"aa"},
+    {id:"II5",sex:"M",gen:2,x:4,affected:false,label:"5",geno:"Aa"},
+    {id:"II6",sex:"F",gen:2,x:5,affected:false,label:"6",geno:"Aa"},
+    {id:"II7",sex:"F",gen:2,x:6,affected:false,label:"7",geno:"Aa"},
+    {id:"III1",sex:"F",gen:3,x:2,affected:false,label:"1",geno:"Aa"},
+    {id:"III2",sex:"F",gen:3,x:3,affected:false,label:"2",geno:"Aa"},
+    {id:"III3",sex:"M",gen:3,x:4,affected:true,label:"3",geno:"aa"},
+    {id:"III4",sex:"M",gen:3,x:5,affected:true,label:"4",geno:"aa",highlight:true},
+  ],
+  couples:[{a:"I1",b:"I2"},{a:"I3",b:"I4"},{a:"II3",b:"II4"}],
+  groups:[
+    {parents:["I1","I2"],children:["II1","II2","II3"]},
+    {parents:["I3","I4"],children:["II4","II5","II6","II7"]},
+    {parents:["II3","II4"],children:["III1","III2","III3","III4"]},
+  ]
+};
+
+// Pattern mini-cards
+const patternRecessive = {
+  people:[
+    {id:"p1",sex:"M",gen:1,x:1,affected:false},
+    {id:"p2",sex:"F",gen:1,x:2,affected:false},
+    {id:"c1",sex:"M",gen:2,x:0,affected:false},
+    {id:"c2",sex:"F",gen:2,x:1,affected:true},
+    {id:"c3",sex:"M",gen:2,x:2,affected:false},
+  ],
+  couples:[{a:"p1",b:"p2"}],
+  groups:[{parents:["p1","p2"],children:["c1","c2","c3"]}]
+};
+const patternDominant = {
+  people:[
+    {id:"p1",sex:"M",gen:1,x:1,affected:true},
+    {id:"p2",sex:"F",gen:1,x:2,affected:false},
+    {id:"c1",sex:"M",gen:2,x:0,affected:true},
+    {id:"c2",sex:"F",gen:2,x:1,affected:false},
+    {id:"c3",sex:"M",gen:2,x:2,affected:true},
+  ],
+  couples:[{a:"p1",b:"p2"}],
+  groups:[{parents:["p1","p2"],children:["c1","c2","c3"]}]
+};
+const patternXRecessive = {
+  people:[
+    {id:"p1",sex:"M",gen:1,x:1,affected:false},
+    {id:"p2",sex:"F",gen:1,x:2,affected:false},
+    {id:"c1",sex:"M",gen:2,x:0,affected:true},
+    {id:"c2",sex:"F",gen:2,x:1,affected:false},
+    {id:"c3",sex:"M",gen:2,x:2,affected:false},
+  ],
+  couples:[{a:"p1",b:"p2"}],
+  groups:[{parents:["p1","p2"],children:["c1","c2","c3"]}]
+};
+const patternXDominant = {
+  people:[
+    {id:"p1",sex:"M",gen:1,x:1,affected:true},
+    {id:"p2",sex:"F",gen:1,x:2,affected:false},
+    {id:"c1",sex:"F",gen:2,x:0,affected:true},
+    {id:"c2",sex:"M",gen:2,x:1,affected:false},
+    {id:"c3",sex:"F",gen:2,x:2,affected:true},
+  ],
+  couples:[{a:"p1",b:"p2"}],
+  groups:[{parents:["p1","p2"],children:["c1","c2","c3"]}]
+};
+
+// CF practice
+const dataCF = {
+  people:[
+    {id:"f",sex:"M",gen:1,x:1,affected:false,label:"1",geno:"Cc"},
+    {id:"m",sex:"F",gen:1,x:2,affected:false,label:"2",geno:"Cc"},
+    {id:"sis",sex:"F",gen:2,x:0,affected:true,label:"1",geno:"cc"},
+    {id:"woman",sex:"F",gen:2,x:1,affected:false,label:"2",geno:"CC or Cc",unknown:true,highlight:true},
+  ],
+  couples:[{a:"f",b:"m"}],
+  groups:[{parents:["f","m"],children:["sis","woman"]}]
+};
+
+// Huntington's practice
+const dataHunt = {
+  people:[
+    {id:"dad",sex:"M",gen:1,x:1,affected:true,label:"1",geno:"Hh"},
+    {id:"mom",sex:"F",gen:1,x:2,affected:false,label:"2",geno:"hh"},
+    {id:"john",sex:"M",gen:2,x:1,affected:false,label:"1",geno:"H_ or hh?",unknown:true,highlight:true},
+  ],
+  couples:[{a:"dad",b:"mom"}],
+  groups:[{parents:["dad","mom"],children:["john"]}]
+};
+
+// Blood type practice
+const dataBlood = {
+  people:[
+    {id:"I1",sex:"M",gen:1,x:1,affected:false,label:"O",geno:"ii"},
+    {id:"I2",sex:"F",gen:1,x:2,affected:false,label:"?",geno:"I<sup>A</sup>i",highlight:true},
+    {id:"II1",sex:"F",gen:2,x:0,affected:false,label:"?",geno:"ii or I<sup>A</sup>i",unknown:true},
+    {id:"II2",sex:"F",gen:2,x:1,affected:false,label:"A",geno:"I<sup>A</sup>i"},
+    {id:"II2sp",sex:"M",gen:2,x:2,affected:false,label:"?",geno:"I<sup>B</sup>i",highlight:true},
+    {id:"II3",sex:"M",gen:2,x:3,affected:false,label:"O",geno:"ii"},
+    {id:"III1",sex:"F",gen:3,x:1,affected:false,label:"B",geno:"I<sup>B</sup>i"},
+    {id:"III2",sex:"F",gen:3,x:2,affected:false,label:"O",geno:"ii"},
+    {id:"III2sp",sex:"M",gen:3,x:3,affected:false,label:"?",geno:"I<sup>A</sup>I<sup>B</sup>",highlight:true},
+    {id:"IV1sp",sex:"F",gen:4,x:1,affected:false,label:"?",geno:"I<sup>B</sup>i",highlight:true},
+    {id:"IV1",sex:"M",gen:4,x:2,affected:false,label:"A",geno:"I<sup>A</sup>i"},
+    {id:"IV2",sex:"F",gen:4,x:3,affected:false,label:"B",geno:"I<sup>B</sup>i"},
+    {id:"V1",sex:"F",gen:5,x:1,affected:false,label:"A",geno:"I<sup>A</sup>i"},
+    {id:"V2",sex:"F",gen:5,x:2,affected:false,label:"B",geno:"I<sup>B</sup>i"},
+    {id:"V3",sex:"M",gen:5,x:3,affected:false,label:"AB",geno:"I<sup>A</sup>I<sup>B</sup>"},
+    {id:"V4",sex:"F",gen:5,x:4,affected:false,label:"O",geno:"ii"},
+  ],
+  couples:[{a:"I1",b:"I2"},{a:"II2",b:"II2sp"},{a:"III2",b:"III2sp"},{a:"IV1sp",b:"IV1"}],
+  groups:[
+    {parents:["I1","I2"],children:["II1","II2","II3"]},
+    {parents:["II2","II2sp"],children:["III1","III2"]},
+    {parents:["III2","III2sp"],children:["IV1","IV2"]},
+    {parents:["IV1sp","IV1"],children:["V1","V2","V3","V4"]},
+  ]
+};
+
+/* ============================================================
+   THOMAS FAMILY STEPPER
+   ============================================================ */
+const thomasFull = {
+  people:[
+    {id:"tom",sex:"M",gen:1,x:1,affected:true,label:"Tom",step:1},
+    {id:"diane",sex:"F",gen:1,x:2,affected:false,label:"Diane",step:1},
+    {id:"annaH",sex:"M",gen:2,x:-1,affected:false,label:"husband",step:5},
+    {id:"anna",sex:"F",gen:2,x:0,affected:true,label:"Anna",step:3},
+    {id:"mary",sex:"F",gen:2,x:1,affected:false,label:"Mary",step:3},
+    {id:"maryH",sex:"M",gen:2,x:2,affected:false,label:"husband",step:5},
+    {id:"teddy",sex:"M",gen:2,x:3,affected:false,label:"Teddy",step:3},
+    {id:"will",sex:"M",gen:3,x:-1,affected:false,label:"Will",step:6},
+    {id:"vanessa",sex:"F",gen:3,x:0,affected:true,label:"Vanessa",step:6},
+    {id:"patrick",sex:"M",gen:3,x:2,affected:false,label:"Patrick",step:6},
+  ],
+  couples:[
+    {a:"tom",b:"diane",step:2},
+    {a:"annaH",b:"anna",step:5},
+    {a:"mary",b:"maryH",step:5},
+  ],
+  groups:[
+    {parents:["tom","diane"],children:["anna","mary","teddy"],step:3},
+    {parents:["annaH","anna"],children:["will","vanessa"],step:6},
+    {parents:["mary","maryH"],children:["patrick"],step:6},
+  ]
+};
+
+const STEP_TEXT = [
+  {t:"Step 1 — Place the oldest generation.", d:"Tom and Diane are the parents, so they start Generation I. A square is a male, a circle is a female — no fill yet, since we haven't marked traits."},
+  {t:"Step 2 — Join the couple.", d:"A horizontal line connects mates. This line is the anchor point every child's line will hang from."},
+  {t:"Step 3 — Add their children, oldest to leftmost.", d:"Anna, Mary, and Teddy drop from the middle of Tom &amp; Diane's marriage line via a shared sibling line, oldest (Anna) on the left, youngest (Teddy) on the right."},
+  {t:"Step 4 — Fill in who has the trait.", d:"We're told everyone is right-handed except Tom and Anna (so far). Right-handedness is dominant, so left-handedness — the trait we're actually tracking — gets the filled shape. Fill Tom's square and Anna's circle."},
+  {t:"Step 5 — Marry in the spouses.", d:"Anna and Mary are both married. Their husbands join the diagram as new shapes connected by a marriage line — but they're not blood relatives, so they don't connect upward to Tom and Diane."},
+  {t:"Step 6 — Add the grandchildren, and finish the fill.", d:"Anna's children are Will (older) and Vanessa (younger); Mary's child is Patrick. We're told the granddaughter is left-handed — that's Vanessa — so she gets filled in too."},
+  {t:"Step 7 — Label everything.", d:"Roman numerals mark each generation (I, II, III); each person gets a number left to right within their row. The pedigree is done — and it's already answering questions, like why every child of Tom &amp; Diane except Anna turned out right-handed even with a left-handed father."},
+];
+
+let curStep = 1;
+const totalSteps = STEP_TEXT.length;
+
+function renderThomasStep(step){
+  const filtered = {
+    people: thomasFull.people.filter(p=>p.step<=step).map(p=>{
+      const cp = Object.assign({}, p);
+      if(step<4) cp.affected = false; // no fills until step 4
+      else if(step===4){
+        // only Tom & Anna filled at step 4 (vanessa added later at step6 already handles her own affected flag)
+      }
+      return cp;
+    }),
+    couples: thomasFull.couples.filter(c=>c.step<=step),
+    groups: thomasFull.groups.filter(g=>g.step<=step),
+  };
+  renderPedigree("thomas-diagram", filtered);
+  document.getElementById("step-caption").innerHTML = `<b>${STEP_TEXT[step-1].t}</b><br>${STEP_TEXT[step-1].d}`;
+  document.getElementById("step-prev").disabled = step===1;
+  document.getElementById("step-next").textContent = step===totalSteps ? "Restart ↺" : "Next step →";
+  const dots = document.getElementById("step-dots");
+  dots.innerHTML = "";
+  for(let i=1;i<=totalSteps;i++){
+    const d = document.createElement("button");
+    d.className = "step-dot" + (i===step?" active":"");
+    d.setAttribute("aria-label","Go to step "+i);
+    d.addEventListener("click",()=>{ curStep=i; renderThomasStep(curStep); });
+    dots.appendChild(d);
+  }
+}
+
+document.getElementById("step-next").addEventListener("click",()=>{
+  curStep = curStep===totalSteps ? 1 : curStep+1;
+  renderThomasStep(curStep);
+});
+document.getElementById("step-prev").addEventListener("click",()=>{
+  if(curStep>1){ curStep--; renderThomasStep(curStep); }
+});
+
+/* ============================================================
+   PATTERN CARDS
+   ============================================================ */
+function buildPatternCards(){
+  const cards = [
+    {tag:"rec", tagLabel:"Autosomal recessive", title:"Skips generations", data:patternRecessive,
+      clues:["Two unaffected parents can have an affected child","Affects males and females equally","Often looks like it 'skips' a generation"]},
+    {tag:"dom", tagLabel:"Autosomal dominant", title:"Never skips", data:patternDominant,
+      clues:["Every affected person has an affected parent","Roughly half the children of an affected parent are affected","Affects males and females equally"]},
+    {tag:"xlink", tagLabel:"X-linked recessive", title:"Mostly males", data:patternXRecessive,
+      clues:["Far more affected males than females","Unaffected carrier mothers can have affected sons","An affected father can't pass it to his sons"]},
+    {tag:"xlink", tagLabel:"X-linked dominant", title:"Fathers → all daughters", data:patternXDominant,
+      clues:["An affected father passes it to 100% of daughters, 0% of sons","An affected mother passes it to ~half her children, either sex","Rarer pattern — most X-linked traits are recessive"]},
+  ];
+  const host = document.getElementById("pattern-cards");
+  host.innerHTML = cards.map((c,i)=>`
+    <div class="card pattern-card">
+      <div><span class="tag ${c.tag}">${c.tagLabel}</span></div>
+      <h4>${c.title}</h4>
+      <div class="pattern-mini" id="pattern-mini-${i}"></div>
+      <ul>${c.clues.map(x=>`<li>${x}</li>`).join("")}</ul>
+    </div>
+  `).join("");
+  cards.forEach((c,i)=>renderPedigree(`pattern-mini-${i}`, c.data));
+}
+
+/* ============================================================
+   REVEAL / SOLVE BUTTONS
+   ============================================================ */
+function wireButtons(){
+  document.querySelectorAll(".reveal-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target = document.getElementById(btn.dataset.target);
+      const on = target.classList.toggle("revealed");
+      btn.textContent = on ? "🙈 Hide genotypes" : "👁 Reveal genotypes";
+    });
+  });
+  document.querySelectorAll(".solve-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const panel = document.getElementById(btn.dataset.target);
+      const on = panel.classList.toggle("open");
+      btn.textContent = on ? "Hide solution" : "Show solution";
+    });
+  });
+}
+
+/* ============================================================
+   QUIZ
+   ============================================================ */
+const QUIZ = [
+  {
+    q:"A trait shows up in a child even though neither parent shows it. What does this tell you about the trait?",
+    opts:["It must be X-linked dominant","It is very likely recessive, and both parents are carriers","It is impossible to inherit this way","It must have come from a mutation, not the parents"],
+    correct:1,
+    why:"Two unaffected parents producing an affected child is the classic signature of a recessive trait — each parent is an unaffected carrier."
+  },
+  {
+    q:"In a pedigree, a filled-in circle represents:",
+    opts:["An unaffected female","A male who has died","A female who shows the trait being tracked","A carrier who doesn't show the trait"],
+    correct:2,
+    why:"Circles are females; a fill (not the shape) shows whether that person expresses the trait."
+  },
+  {
+    q:"An affected father has an X-linked recessive condition. Which of his children could also be affected by the same allele on his X chromosome?",
+    opts:["All of his sons","None of his sons, but his daughters can become carriers","All of his daughters, but none of his sons","It's impossible to say without knowing the mother's genotype for the sons"],
+    correct:1,
+    why:"Sons get their only X chromosome from their mother, not their father — so a father's X-linked allele never reaches his sons. Every daughter gets his X, so she becomes at least a carrier."
+  },
+  {
+    q:"Two carrier parents (Cc × Cc) for a recessive condition have a child who does NOT have the condition. What's the chance that child is a carrier?",
+    opts:["1/4","1/2","2/3","3/4"],
+    correct:2,
+    why:"The Cc × Cc cross gives 1 CC : 2 Cc : 1 cc. Once you know the child is unaffected, you remove the cc possibility and ask only among the remaining 3 outcomes — 2 of which are Cc, giving 2/3."
+  },
+  {
+    q:"You can determine a person's genotype with certainty from their children when:",
+    opts:["They have at least three children","One of their children shows a recessive trait that only makes sense if that parent carries the recessive allele","They are the oldest person in the pedigree","Genotype can never be determined from children, only from parents"],
+    correct:1,
+    why:"An affected (homozygous recessive) child is proof that both parents carry at least one copy of the recessive allele, even if neither parent shows the trait themselves."
+  },
+];
+
+function buildQuiz(){
+  const host = document.getElementById("quiz-container");
+  host.innerHTML = QUIZ.map((item,qi)=>`
+    <div class="quiz-item" data-qi="${qi}">
+      <div class="quiz-q">${qi+1}. ${item.q}</div>
+      <div class="quiz-opts">
+        ${item.opts.map((opt,oi)=>`
+          <label class="quiz-opt" data-oi="${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span>${opt}</span>
+          </label>
+        `).join("")}
+      </div>
+      <div class="quiz-fb" id="fb-${qi}"></div>
+    </div>
+  `).join("");
+}
+
+document.getElementById("quiz-check").addEventListener("click",()=>{
+  let score = 0;
+  QUIZ.forEach((item,qi)=>{
+    const chosen = document.querySelector(`input[name="q${qi}"]:checked`);
+    const fb = document.getElementById(`fb-${qi}`);
+    const opts = document.querySelectorAll(`.quiz-item[data-qi="${qi}"] .quiz-opt`);
+    opts.forEach(o=>o.classList.remove("correct","incorrect"));
+    if(!chosen){
+      fb.textContent = "Pick an answer to check this one.";
+      fb.classList.add("show");
+      return;
+    }
+    const chosenVal = parseInt(chosen.value,10);
+    const correctOpt = opts[item.correct];
+    correctOpt.classList.add("correct");
+    if(chosenVal===item.correct){
+      score++;
+      fb.innerHTML = "<b>Correct.</b> " + item.why;
+    } else {
+      opts[chosenVal].classList.add("incorrect");
+      fb.innerHTML = "<b>Not quite.</b> " + item.why;
+    }
+    fb.classList.add("show");
+  });
+  const banner = document.getElementById("score-banner");
+  banner.textContent = `You scored ${score} / ${QUIZ.length}.`;
+  banner.classList.add("show");
+});
+
+/* ============================================================
+   TOC SCROLL SPY
+   ============================================================ */
+function wireTOC(){
+  const links = document.querySelectorAll(".toc a");
+  const sections = [...links].map(l=>document.querySelector(l.getAttribute("href")));
+  function onScroll(){
+    let idx = 0;
+    const y = window.scrollY + 120;
+    sections.forEach((s,i)=>{ if(s && s.offsetTop <= y) idx = i; });
+    links.forEach((l,i)=>l.classList.toggle("active", i===idx));
+  }
+  window.addEventListener("scroll", onScroll, {passive:true});
+  onScroll();
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+buildLegend();
+renderThomasStep(curStep);
+buildPatternCards();
+renderPedigree("dia-blueeyes", dataBlueEyes);
+renderPedigree("dia-albinism", dataAlbinism);
+renderPedigree("dia-hemophilia", dataHemophilia);
+renderPedigree("dia-rickets", dataRickets);
+renderPedigree("dia-ptc", dataPTC);
+renderPedigree("dia-cf", dataCF);
+renderPedigree("dia-huntington", dataHunt);
+renderPedigree("dia-blood", dataBlood);
+wireButtons();
+buildQuiz();
+wireTOC();
+
+})();
+</script>
+
+</body></html>
